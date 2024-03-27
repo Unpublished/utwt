@@ -1,4 +1,3 @@
-use libc::pid_t;
 use std::convert::TryFrom;
 use std::ffi::CStr;
 use std::os::raw::c_short;
@@ -40,21 +39,21 @@ pub enum UtmpEntry {
     /// Process spawned by `init(8)`
     InitProcess {
         /// PID of the init process
-        pid: pid_t,
+        pid: i32,
         /// Time entry was made
         time_in_micros: i64,
     },
     /// Session leader process for user login
     LoginProcess {
         /// PID of the login process
-        pid: pid_t,
+        pid: i32,
         /// Time entry was made
         time_in_micros: i64,
     },
     /// Normal process
     UserProcess {
         /// PID of login process
-        pid: pid_t,
+        pid: i32,
         /// Device name of tty
         line: String,
         /// Username
@@ -62,7 +61,7 @@ pub enum UtmpEntry {
         /// Hostname for remote login
         host: String,
         /// Session ID (`getsid(2)`)
-        session: pid_t,
+        session: i32,
         /// Time entry was made
         time_in_micros: i64,
         // TODO: Figure out the correct byte order to parse the address
@@ -71,7 +70,7 @@ pub enum UtmpEntry {
     /// Terminated process
     DeadProcess {
         /// PID of the terminated process
-        pid: pid_t,
+        pid: i32,
         /// Device name of tty
         line: String,
         /// Time entry was made
@@ -146,7 +145,7 @@ impl<'a> TryFrom<&'a utmp64> for UtmpEntry {
                 line: string_from_bytes(&from.ut_line).map_err(UtmpError::InvalidLine)?,
                 user: string_from_bytes(&from.ut_user).map_err(UtmpError::InvalidUser)?,
                 host: string_from_bytes(&from.ut_host).map_err(UtmpError::InvalidHost)?,
-                session: from.ut_session as pid_t,
+                session: from.ut_session as i32,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
             utmp_raw::DEAD_PROCESS => UtmpEntry::DeadProcess {
