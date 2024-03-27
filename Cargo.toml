@@ -11,7 +11,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-libc      = "0.2.147"
+libc      = "0.2.153"
 utmp-raw  = "0.3.0"
 thiserror = "1.0.58"
 zerocopy  = "0.6"
