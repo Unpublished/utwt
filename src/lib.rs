@@ -7,6 +7,7 @@
 //! ```
 //! # use anyhow::Result;
 //! # fn main() -> Result<()> {
+//! # #[cfg(target_os = "linux")]
 //! let entries = utwt::parse_from_path("/var/run/utmp")?;
 //! // ...
 //! # Ok(())
@@ -19,6 +20,7 @@
 //! # use anyhow::Result;
 //! use utwt::UtmpParser;
 //! # fn main() -> Result<()> {
+//! # #[cfg(target_os = "linux")]
 //! for entry in UtmpParser::from_path("/var/run/utmp")? {
 //!     let entry = entry?;
 //!     // ...
