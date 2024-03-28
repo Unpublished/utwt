@@ -7,7 +7,7 @@ use std::mem;
 use std::path::Path;
 use thiserror::Error;
 use utmp_raw::{utmp, x32::utmp as utmp32, x64::utmp as utmp64};
-use zerocopy::{FromBytes, LayoutVerified};
+use zerocopy::{FromBytes, Ref};
 
 #[doc(hidden)]
 pub struct UtmpParserImpl<R, T = utmp>(R, PhantomData<T>);
@@ -111,9 +111,7 @@ fn read_entry<R: Read, T: FromBytes>(
             Err(e) => return Err(e.into()),
         }
     }
-    Ok(Some(
-        LayoutVerified::<_, T>::new(buffer).unwrap().into_ref(),
-    ))
+    Ok(Some(Ref::<_, T>::new(buffer).unwrap().into_ref()))
 }
 
 /// Parse utmp entries.

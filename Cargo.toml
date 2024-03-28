@@ -14,7 +14,7 @@ license = "MIT"
 libc      = "0.2.153"
 utmp-raw  = { git = "https://github.com/Unpublished/utmp-rs" }
 thiserror = "1.0.58"
-zerocopy  = "0.6"
+zerocopy  = "0.7"
 
 [dev-dependencies]
 anyhow = "1.0.81"
