@@ -11,7 +11,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-libc      = "0.2.153"
+libc      = "0.2.154"
 utmp-raw  = { git = "https://github.com/Unpublished/utmp-rs" }
 thiserror = "1.0.59"
 zerocopy  = "0.7"
