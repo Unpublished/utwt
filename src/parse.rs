@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 use std::mem;
 use std::path::Path;
 use thiserror::Error;
-use utwt_raw::{utmp, x32::utmp as utmp32, x64::utmp as utmp64};
+use utmp_raw::{utmp, x32::utmp as utmp32, x64::utmp as utmp64};
 use zerocopy::{FromBytes, Ref};
 
 #[doc(hidden)]

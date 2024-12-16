@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 use std::ffi::CStr;
 use std::os::raw::c_short;
 use thiserror::Error;
-use utwt_raw::x32::utmp as utmp32;
-use utwt_raw::x64::{timeval as timeval64, utmp as utmp64};
+use utmp_raw::x32::utmp as utmp32;
+use utmp_raw::x64::{timeval as timeval64, utmp as utmp64};
 
 /// Parsed utmp entry.
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -109,8 +109,8 @@ impl<'a> TryFrom<&'a utmp64> for UtmpEntry {
 
     fn try_from(from: &utmp64) -> Result<Self, UtmpError> {
         Ok(match from.ut_type {
-            utwt_raw::EMPTY => UtmpEntry::Empty,
-            utwt_raw::RUN_LVL => {
+            utmp_raw::EMPTY => UtmpEntry::Empty,
+            utmp_raw::RUN_LVL => {
                 let kernel_version =
                     string_from_bytes(&from.ut_host).map_err(UtmpError::InvalidHost)?;
                 let time_in_micros = time_from_tv(from.ut_tv)?;
@@ -126,21 +126,21 @@ impl<'a> TryFrom<&'a utmp64> for UtmpEntry {
                     }
                 }
             }
-            utwt_raw::BOOT_TIME => UtmpEntry::BootTime {
+            utmp_raw::BOOT_TIME => UtmpEntry::BootTime {
                 kernel_version: string_from_bytes(&from.ut_host).map_err(UtmpError::InvalidHost)?,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
-            utwt_raw::NEW_TIME => UtmpEntry::NewTime(time_from_tv(from.ut_tv)?),
-            utwt_raw::OLD_TIME => UtmpEntry::OldTime(time_from_tv(from.ut_tv)?),
-            utwt_raw::INIT_PROCESS => UtmpEntry::InitProcess {
+            utmp_raw::NEW_TIME => UtmpEntry::NewTime(time_from_tv(from.ut_tv)?),
+            utmp_raw::OLD_TIME => UtmpEntry::OldTime(time_from_tv(from.ut_tv)?),
+            utmp_raw::INIT_PROCESS => UtmpEntry::InitProcess {
                 pid: from.ut_pid,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
-            utwt_raw::LOGIN_PROCESS => UtmpEntry::LoginProcess {
+            utmp_raw::LOGIN_PROCESS => UtmpEntry::LoginProcess {
                 pid: from.ut_pid,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
-            utwt_raw::USER_PROCESS => UtmpEntry::UserProcess {
+            utmp_raw::USER_PROCESS => UtmpEntry::UserProcess {
                 pid: from.ut_pid,
                 line: string_from_bytes(&from.ut_line).map_err(UtmpError::InvalidLine)?,
                 user: string_from_bytes(&from.ut_user).map_err(UtmpError::InvalidUser)?,
@@ -148,12 +148,12 @@ impl<'a> TryFrom<&'a utmp64> for UtmpEntry {
                 session: from.ut_session as i32,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
-            utwt_raw::DEAD_PROCESS => UtmpEntry::DeadProcess {
+            utmp_raw::DEAD_PROCESS => UtmpEntry::DeadProcess {
                 pid: from.ut_pid,
                 line: string_from_bytes(&from.ut_line).map_err(UtmpError::InvalidLine)?,
                 time_in_micros: time_from_tv(from.ut_tv)?,
             },
-            utwt_raw::ACCOUNTING => UtmpEntry::Accounting,
+            utmp_raw::ACCOUNTING => UtmpEntry::Accounting,
             _ => return Err(UtmpError::UnknownType(from.ut_type)),
         })
     }
