@@ -7,7 +7,7 @@ use std::mem;
 use std::path::Path;
 use thiserror::Error;
 use utmp_raw::{utmp, x32::utmp as utmp32, x64::utmp as utmp64};
-use zerocopy::{FromBytes, Ref};
+use zerocopy::{FromBytes, Immutable, KnownLayout};
 
 #[doc(hidden)]
 pub struct UtmpParserImpl<R, T = utmp>(R, PhantomData<T>);
@@ -86,7 +86,7 @@ impl<R: Read> Iterator for UtmpParserImpl<R, utmp64> {
     }
 }
 
-fn read_entry<R: Read, T: FromBytes>(
+fn read_entry<R: Read, T: FromBytes + Immutable + KnownLayout>(
     mut reader: R,
     buffer: &mut [u8],
 ) -> Result<Option<&T>, ParseError> {
@@ -111,7 +111,7 @@ fn read_entry<R: Read, T: FromBytes>(
             Err(e) => return Err(e.into()),
         }
     }
-    Ok(Some(Ref::<_, T>::new(buffer).unwrap().into_ref()))
+    Ok(Some(T::ref_from_bytes(buffer).unwrap()))
 }
 
 /// Parse utmp entries.
