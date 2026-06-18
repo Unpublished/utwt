@@ -10,7 +10,7 @@ jobs:
     name: Check fmt & build docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -35,7 +35,7 @@ jobs:
           - windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
